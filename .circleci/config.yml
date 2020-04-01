@@ -8,15 +8,16 @@ jobs:
       - run: mkdir -p my_workspace
       - run: echo "Hello World" > my_workspace/echo-output
       - persist_to_workspace:
-          root: my_workspace
-          paths:
-            - echo-output
+         root: my_workspace
+         paths:
+           - echo-output
   testa:
     docker:
      - image: circleci/ruby:2.4.1
     steps:
      - attach_workspace:
-         at: my_workspace
+        at: my_workspace
+         
      - run: cat my_workspace/echo_output
   testb:
     docker:
