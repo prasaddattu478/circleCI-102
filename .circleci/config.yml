@@ -14,14 +14,14 @@ jobs:
      - checkout
      - run: echo " A more familiar hi"
      - run: sleep 5
- testb:
+  testb:
     docker:
      - image: circleci/ruby:2.4.1
     steps:
      - checkout
      - run: echo " A locallized Salut"
      - run: sleep 5
- deploy:
+  deploy:
     docker:
      - image: circleci/ruby:2.4.1
     steps:
@@ -46,5 +46,4 @@ workflows:
         requires:
           - testa
           - testb
-    
-      
+        
