@@ -7,12 +7,26 @@ jobs:
       - checkout
       - run: echo "A First Hello"
       - run: sleep 5
-  test:
+  testa:
     docker:
      - image: circleci/ruby:2.4.1
     steps:
      - checkout
      - run: echo " A more familiar hi"
+     - run: sleep 5
+ testb:
+    docker:
+     - image: circleci/ruby:2.4.1
+    steps:
+     - checkout
+     - run: echo " A locallized Salut"
+     - run: sleep 5
+ deploy:
+    docker:
+     - image: circleci/ruby:2.4.1
+    steps:
+     - checkout
+     - run: echo " A final Goodbye"
      - run: sleep 5
      
 workflows:
@@ -20,8 +34,17 @@ workflows:
  build_and_test:
   jobs:
     - build
-    - test:
+    - testa:
       # Only run the job if build succeeds
         requires:
           - build
+    - testb:
+      # Only run the job if build succeeds
+        requires:
+          - build
+    - deploy:
+        requires:
+          - testa
+          - testb
+    
       
