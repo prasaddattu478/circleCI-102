@@ -5,4 +5,10 @@ jobs:
       - image: circleci/ruby:2.4.1
     steps:
       - checkout
-      - run: Notacommand
+      - run: echo "A First Hello"
+  test:
+    docker:
+     - image: circleci/ruby:2.4.1
+    steps:
+     - checkout
+     - run: echo " A more familiar hi"
