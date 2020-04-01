@@ -6,56 +6,63 @@ jobs:
     steps:
       - checkout
       - run: mkdir -p my_workspace
-      - run: echo "Hello World" >> my_workspace/echo-output
+      - run: echo "Hello World" > my_workspace/echo-output
       - persist_to_workspace:
-         root: my_workspace
-         paths:
-           - echo-output
+          # Must be an absolute path, or relative path from working_directory
+          root: my_workspace
+          # Must be relative path from root
+          paths:
+            - echo-output      
   testa:
     docker:
-     - image: circleci/ruby:2.4.1
+      - image: circleci/ruby:2.4.1
     steps:
-     - attach_workspace:
-        at: my_workspace
-         
-     - run: cat my_workspace/echo_output
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: my_workspace
+
+      - run: cat my_workspace/echo-output
+          
   testb:
     docker:
-     - image: circleci/ruby:2.4.1
+      - image: circleci/ruby:2.4.1
     steps:
-     - attach_workspace:
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
           at: my_workspace
-     - run: |
-          # This will fail internallly, we will use SSH to debug and fix
-          if [[ $(cat my_worspace/echo_output) == "Trying out workspaces" ]]; then
+
+      - run: |
+          # this will fail intentionally, we'll use SSH to debug and fix
+          if [[ $(cat my_workspace/echo-output) == "Trying out workspaces" ]]; then
             echo "It worked!";
           else
             echo "Nope!"; exit 1
+          fi   
+          
   deploy:
     docker:
-     - image: circleci/ruby:2.4.1
+      - image: circleci/ruby:2.4.1
     steps:
-     - attach_workspace:
-        at: my_workspace
-     - run: |
-          echo "Deploying message"
-          cat my_workspace/echo_outpu
-     
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: my_workspace
+
+      - run: |
+          echo "Deploying message!"
+          cat my_workspace/echo-output
+
 workflows:
- version: 2
- build_and_test:
-  jobs:
-    - build
-    - testa:
-      # Only run the job if build succeeds
-        requires:
-          - build
-    - testb:
-      # Only run the job if build succeeds
-        requires:
-          - build
-    - deploy:
-        requires:
-          - testa
-          - testb
-        
+  version: 2
+  build_and_test:
+    jobs:
+      - build
+      - testa:
+          requires:
+            - build 
+      - testb:
+          requires:
+            - build 
+      - deploy:
+          requires:
+            - testa
+            - testb
